@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.sridhar.onlinenewsfeed.R;
 import com.sridhar.onlinenewsfeed.adater.CustomListAdapter;
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity
     private ListView listView;
     private CustomListAdapter adapter;
     private Context context;
-
+    ImageRequest imageRequest;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -88,7 +90,7 @@ public class MainActivity extends AppCompatActivity
 
                                 JSONObject obj = (JSONObject) response
                                         .get(i);
-                                Newsfeeds newsfeeds=new Newsfeeds();
+                                final Newsfeeds newsfeeds=new Newsfeeds();
 
                                 String s=obj.getString("title");
                                 newsfeeds.setTitle(s);
@@ -99,6 +101,27 @@ public class MainActivity extends AppCompatActivity
 
                                 String s2=obj.getString("img_url");
                                 newsfeeds.setImg_url(s2);
+
+                                /*ImageRequest imageRequest = new ImageRequest(
+                                        obj.getString("img_url"),
+                                        new Response.Listener<Bitmap>() {
+                                            @Override
+                                            public void onResponse(Bitmap response) {
+
+                                                newsfeeds.setBitmap(response);
+
+                                            }
+                                        },
+                                        200, 200,
+                                        ImageView.ScaleType.CENTER_CROP,
+                                        Bitmap.Config.ARGB_8888,
+                                        new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                                // handleVolleyError(error);
+                                            }
+                                        });
+                                requestQueue.add(imageRequest);*/
 
                                 newsList.add(newsfeeds);
 
