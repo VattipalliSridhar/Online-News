@@ -3,6 +3,7 @@ package com.sridhar.onlinenewsfeed.adater;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +14,7 @@ import android.widget.TextView;
 
 import com.android.volley.Cache;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.ImageRequest;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.sridhar.onlinenewsfeed.R;
 import com.sridhar.onlinenewsfeed.activities.MainActivity;
 import com.sridhar.onlinenewsfeed.models.Newsfeeds;
@@ -75,6 +71,7 @@ public class CustomListAdapter extends BaseAdapter
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.list_row, parent, false);
             holder.title = (TextView) convertView.findViewById(R.id.title_txt);
+            holder.time_txt=(TextView)convertView.findViewById(R.id.time_txt);
             holder.content = (TextView) convertView.findViewById(R.id.content_txt);
             holder.imageView=(ImageView)convertView.findViewById(R.id.thumbnail);
 
@@ -86,12 +83,8 @@ public class CustomListAdapter extends BaseAdapter
 
         holder.title.setText(detailss.getTitle());
         holder.content.setText(detailss.getContent_text());
-       /* Glide.with(activity).load(detailss.getImg_url())
-                .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.imageView);*/
-      // holder.imageView.setImageBitmap(detailss.getBitmap());
+        holder.time_txt.setText("post: "+DateUtils.getRelativeTimeSpanString(Long.parseLong(detailss.getTime())));
+
 
         mImageLoader.get(detailss.getImg_url(), ImageLoader.getImageListener(
                 holder.imageView,R.drawable.ico_loading, R.drawable.ico_error));
@@ -111,7 +104,7 @@ public class CustomListAdapter extends BaseAdapter
     }
 
     class ViewHolder {
-        TextView title;
+        TextView title,time_txt;
         TextView content;
         ImageView imageView;
     }

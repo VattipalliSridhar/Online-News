@@ -102,6 +102,8 @@ public class MainActivity extends AppCompatActivity
                                 String s2=obj.getString("img_url");
                                 newsfeeds.setImg_url(s2);
 
+                                String s3=obj.getString("time");
+                                newsfeeds.setTime(s3);
                                 /*ImageRequest imageRequest = new ImageRequest(
                                         obj.getString("img_url"),
                                         new Response.Listener<Bitmap>() {
@@ -123,7 +125,7 @@ public class MainActivity extends AppCompatActivity
                                         });
                                 requestQueue.add(imageRequest);*/
 
-                                newsList.add(newsfeeds);
+                                newsList.add(0,newsfeeds);
 
 
                             }

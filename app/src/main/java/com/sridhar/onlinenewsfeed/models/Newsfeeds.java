@@ -12,13 +12,25 @@ public class Newsfeeds
     String content_text;
     String img_url;
     Bitmap bitmap;
+    String time;
 
-    public Newsfeeds(String title, String content_text, String img_url, Bitmap bitmap) {
+    public String getTime() {
+        return time;
+    }
+
+    public Newsfeeds(String title, String content_text, String img_url, Bitmap bitmap, String time) {
         this.title = title;
         this.content_text = content_text;
         this.img_url = img_url;
         this.bitmap = bitmap;
+        this.time = time;
     }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+
 
     public Bitmap getBitmap() {
 
