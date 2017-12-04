@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/all_news"
+            android:title="తాజా వార్తలు"
+            android:icon="@mipmap/ic_launcher"/>
+        <item
+            android:id="@+id/world_news"
+            android:title="అంతర్జాతీయ వార్తలు"
+            android:icon="@mipmap/ic_launcher"/>
+
+        <item
+            android:id="@+id/national_news"
+            android:title="జాతీయ వార్తలు"
+            android:icon="@mipmap/ic_launcher"/>
+        <item
+            android:id="@+id/ap_news"
+            android:title="ఆంధ్రప్రదేశ్ వార్తలు"
+            android:icon="@mipmap/ic_launcher"/>
+        <item
+            android:id="@+id/tg_news"
+            android:title="తెలంగాణ వార్తలు"
+            android:icon="@mipmap/ic_launcher"/>
+        <item
+            android:id="@+id/sports_news"
+            android:title="క్రీడ వార్తలు"
+            android:icon="@mipmap/ic_launcher"/>
+        <item
+            android:id="@+id/cinema_news"
+            android:title="సినిమ వార్తలు"
+            android:icon="@mipmap/ic_launcher"/>
+        <item
+            android:id="@+id/special_quo"
+            android:title=" స్పెషల్ "
+            android:icon="@mipmap/ic_launcher"/>
+    </group>
+</menu>
