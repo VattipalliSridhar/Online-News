@@ -11,8 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:scaleType="fitXY"
-        android:layout_margin="5dp"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@mipmap/ic_launcher"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_marginTop="5dp"
@@ -43,6 +45,13 @@
         android:textColor="@android:color/black"
         android:text="aaaaaaa"
         />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/share_button"
+        android:layout_below="@+id/content_txt"
+        android:layout_alignParentRight="true"/>
 
 
 

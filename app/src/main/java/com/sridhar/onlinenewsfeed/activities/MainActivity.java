@@ -44,10 +44,10 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
-{
+public class MainActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
     private String url = null;
     private ProgressDialog pDialog;
@@ -60,9 +60,9 @@ public class MainActivity extends AppCompatActivity
     private JsonArrayRequest jsonArrayRequest;
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -72,32 +72,30 @@ public class MainActivity extends AppCompatActivity
 
 
         requestQueue = VolleySingleton.getVolleySingletonInstance().getRequestQueue();
-        listView=(ListView)findViewById(R.id.list);
-        context=this;
+        listView = (ListView) findViewById(R.id.list);
+        context = this;
 
-        url="https://sites.google.com/site/myapps4748/android/abc.json";
+        url = "https://sites.google.com/site/myapps4748/android/abc.json";
         jsonArrayRequest = getJsonArrayRequest();
         requestQueue.add(jsonArrayRequest);
-
-
 
 
     }
 
     public void initNavigationDrawer() {
 
-        NavigationView navigationView = (NavigationView)findViewById(R.id.navigation_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
 
                 int id = menuItem.getItemId();
 
-                switch (id){
+                switch (id) {
                     case R.id.all_news:
 
                         newsList.clear();
-                        url="https://sites.google.com/site/myapps4748/android/abc.json";
+                        url = "https://sites.google.com/site/myapps4748/android/abc.json";
                         jsonArrayRequest = getJsonArrayRequest();
                         requestQueue.add(jsonArrayRequest);
 
@@ -107,7 +105,7 @@ public class MainActivity extends AppCompatActivity
 
 
                         newsList.clear();
-                        url="https://sites.google.com/site/onlinenews008/onlinenews/world.json";
+                        url = "https://sites.google.com/site/onlinenews008/onlinenews/world.json";
                         jsonArrayRequest = getJsonArrayRequest();
                         requestQueue.add(jsonArrayRequest);
 
@@ -116,7 +114,7 @@ public class MainActivity extends AppCompatActivity
                     case R.id.national_news:
 
                         newsList.clear();
-                        url="https://sites.google.com/site/onlinenews008/onlinenews/national.json";
+                        url = "https://sites.google.com/site/onlinenews008/onlinenews/national.json";
                         jsonArrayRequest = getJsonArrayRequest();
                         requestQueue.add(jsonArrayRequest);
 
@@ -125,7 +123,7 @@ public class MainActivity extends AppCompatActivity
                     case R.id.ap_news:
 
                         newsList.clear();
-                        url="https://sites.google.com/site/onlinenews008/onlinenews/ap_new.json";
+                        url = "https://sites.google.com/site/onlinenews008/onlinenews/ap_new.json";
                         jsonArrayRequest = getJsonArrayRequest();
                         requestQueue.add(jsonArrayRequest);
 
@@ -134,7 +132,7 @@ public class MainActivity extends AppCompatActivity
                     case R.id.tg_news:
 
                         newsList.clear();
-                        url="https://sites.google.com/site/onlinenews008/onlinenews/tg_news.json";
+                        url = "https://sites.google.com/site/onlinenews008/onlinenews/tg_news.json";
                         jsonArrayRequest = getJsonArrayRequest();
                         requestQueue.add(jsonArrayRequest);
 
@@ -143,7 +141,7 @@ public class MainActivity extends AppCompatActivity
                     case R.id.sports_news:
 
                         newsList.clear();
-                        url="https://sites.google.com/site/onlinenews008/onlinenews/sports_news.json";
+                        url = "https://sites.google.com/site/onlinenews008/onlinenews/sports_news.json";
                         jsonArrayRequest = getJsonArrayRequest();
                         requestQueue.add(jsonArrayRequest);
 
@@ -152,7 +150,7 @@ public class MainActivity extends AppCompatActivity
                     case R.id.cinema_news:
 
                         newsList.clear();
-                        url="https://sites.google.com/site/onlinenews008/onlinenews/cinema_news.json";
+                        url = "https://sites.google.com/site/onlinenews008/onlinenews/cinema_news.json";
                         jsonArrayRequest = getJsonArrayRequest();
                         requestQueue.add(jsonArrayRequest);
 
@@ -161,7 +159,7 @@ public class MainActivity extends AppCompatActivity
                     case R.id.special_quo:
 
                         newsList.clear();
-                        url="https://sites.google.com/site/onlinenews008/onlinenews/special_quo.json";
+                        url = "https://sites.google.com/site/onlinenews008/onlinenews/special_quo.json";
                         jsonArrayRequest = getJsonArrayRequest();
                         requestQueue.add(jsonArrayRequest);
 
@@ -172,14 +170,14 @@ public class MainActivity extends AppCompatActivity
             }
         });
         View header = navigationView.getHeaderView(0);
-        TextView tv_email = (TextView)header.findViewById(R.id.app_tv);
-        tv_email.setText(""+getResources().getString(R.string.app_name));
-        drawerLayout = (DrawerLayout)findViewById(R.id.drawer);
+        TextView tv_email = (TextView) header.findViewById(R.id.app_tv);
+        tv_email.setText("" + getResources().getString(R.string.app_name));
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close){
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
             @Override
-            public void onDrawerClosed(View v){
+            public void onDrawerClosed(View v) {
                 super.onDrawerClosed(v);
             }
 
@@ -202,56 +200,35 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onResponse(JSONArray response) {
                         //Toast.makeText(context,response.toString(),Toast.LENGTH_LONG).show();
-                        try
-                        {
+                        try {
                             //jsonResponse = "";
                             for (int i = 0; i < response.length(); i++) {
 
                                 JSONObject obj = (JSONObject) response
                                         .get(i);
-                                final Newsfeeds newsfeeds=new Newsfeeds();
+                                final Newsfeeds newsfeeds = new Newsfeeds();
 
-                                String s=obj.getString("title");
+                                String s = obj.getString("title");
                                 newsfeeds.setTitle(s);
 
 
-                                String s1=obj.getString("content");
+                                String s1 = obj.getString("content");
                                 newsfeeds.setContent_text(s1);
 
-                                String s2=obj.getString("img_url");
+                                String s2 = obj.getString("img_url");
                                 newsfeeds.setImg_url(s2);
 
-                                String s3=obj.getString("time");
+                                String s3 = obj.getString("time");
                                 newsfeeds.setTime(s3);
-                                /*ImageRequest imageRequest = new ImageRequest(
-                                        obj.getString("img_url"),
-                                        new Response.Listener<Bitmap>() {
-                                            @Override
-                                            public void onResponse(Bitmap response) {
 
-                                                newsfeeds.setBitmap(response);
 
-                                            }
-                                        },
-                                        200, 200,
-                                        ImageView.ScaleType.CENTER_CROP,
-                                        Bitmap.Config.ARGB_8888,
-                                        new Response.ErrorListener() {
-                                            @Override
-                                            public void onErrorResponse(VolleyError error) {
-                                                // handleVolleyError(error);
-                                            }
-                                        });
-                                requestQueue.add(imageRequest);*/
-
-                                newsList.add(0,newsfeeds);
+                                newsList.add(0, newsfeeds);
 
 
                             }
 
 
-                        }
-                        catch (JSONException e) {
+                        } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(getApplicationContext(),
                                     "Error: " + e.getMessage(),
@@ -259,8 +236,9 @@ public class MainActivity extends AppCompatActivity
                         }
 
                         pDialog.hide();
-                        Log.e("msg",""+newsList.size());
-                        adapter=new CustomListAdapter(MainActivity.this,newsList);
+                        //Collections.shuffle(newsList);
+                        Log.e("msg", "" + newsList.size());
+                        adapter = new CustomListAdapter(MainActivity.this, newsList);
                         listView.setAdapter(adapter);
                     }
                 },
@@ -275,32 +253,19 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
-    private void handleVolleyError(VolleyError error)
-    {
-        if (error instanceof AuthFailureError || error instanceof TimeoutError)
-        {
-            Toast.makeText(context,"AuthFailureError/TimeoutError",Toast.LENGTH_LONG).show();
-        }
-        else if (error instanceof NoConnectionError)
-        {
-            Toast.makeText(context,"NoConnectionError",Toast.LENGTH_LONG).show();
-        }
-        else if (error instanceof NetworkError)
-        {
-            Toast.makeText(context,"NetworkError",Toast.LENGTH_LONG).show();
-        }
-        else if (error instanceof ServerError)
-        {
-            Toast.makeText(context,"ServerError",Toast.LENGTH_LONG).show();
-        }
-        else if (error instanceof ParseError)
-        {
-            Toast.makeText(context,"ParseError",Toast.LENGTH_LONG).show();
+    private void handleVolleyError(VolleyError error) {
+        if (error instanceof AuthFailureError || error instanceof TimeoutError) {
+            Toast.makeText(context, "AuthFailureError/TimeoutError", Toast.LENGTH_LONG).show();
+        } else if (error instanceof NoConnectionError) {
+            Toast.makeText(context, "NoConnectionError", Toast.LENGTH_LONG).show();
+        } else if (error instanceof NetworkError) {
+            Toast.makeText(context, "NetworkError", Toast.LENGTH_LONG).show();
+        } else if (error instanceof ServerError) {
+            Toast.makeText(context, "ServerError", Toast.LENGTH_LONG).show();
+        } else if (error instanceof ParseError) {
+            Toast.makeText(context, "ParseError", Toast.LENGTH_LONG).show();
         }
     }
-
 
 
 }
