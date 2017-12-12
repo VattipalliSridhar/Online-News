@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,7 +52,7 @@ public class CustomListAdapter extends BaseAdapter {
     private List<Newsfeeds> movieItems;
     private RequestQueue requestQueue;
     private ImageLoader mImageLoader;
-    private String ImageUrl = "";
+    private String ImageUrl = "",title="";
     Bitmap bitmaptwo;
 
     public CustomListAdapter(MainActivity mainActivity, List<Newsfeeds> newsList) {
@@ -108,6 +109,8 @@ public class CustomListAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 ImageUrl = "";
+                title="";
+                title=detailss.getContent_text();
                 ImageUrl = detailss.getImg_url();
                 new BackgroundTask().execute(new String[]{ImageUrl});
 
@@ -171,6 +174,7 @@ public class CustomListAdapter extends BaseAdapter {
                 intent.setType("image/jpeg");
                 bitmaptwo.compress(Bitmap.CompressFormat.JPEG, 100, new ByteArrayOutputStream());
                 intent.putExtra("android.intent.extra.STREAM", Uri.parse(MediaStore.Images.Media.insertImage(activity.getContentResolver(), bitmaptwo, "Title", null)));
+                intent.putExtra(Intent.EXTRA_TEXT,title);
                 activity.startActivity(Intent.createChooser(intent, "Select"));
             } catch (Exception e) {
                 e.printStackTrace();
