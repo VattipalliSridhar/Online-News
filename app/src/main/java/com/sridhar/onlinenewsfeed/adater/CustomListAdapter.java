@@ -7,9 +7,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.format.DateUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +49,8 @@ import cz.msebera.android.httpclient.client.methods.HttpGet;
  * Created by 2136 on 11/9/2017.
  */
 
-public class CustomListAdapter extends BaseAdapter {
+public class CustomListAdapter extends RecyclerView.Adapter<CustomListAdapter.MyViewHolder> {
+
     private Activity activity;
     private LayoutInflater inflater;
     private List<Newsfeeds> movieItems;
@@ -54,88 +58,49 @@ public class CustomListAdapter extends BaseAdapter {
     private ImageLoader mImageLoader;
     private String ImageUrl = "",title="";
     Bitmap bitmaptwo;
-
-    public CustomListAdapter(MainActivity mainActivity, List<Newsfeeds> newsList) {
-        this.activity = mainActivity;
-        inflater = (LayoutInflater) this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    private int width, height;
+    public CustomListAdapter(MainActivity mainActivity, List<Newsfeeds> newsList)
+    {
         this.movieItems = newsList;
         Log.e("msg", "" + movieItems.size());
         requestQueue = VolleySingleton.getVolleySingletonInstance().getRequestQueue();
         mImageLoader = new ImageLoader(this.requestQueue,
                 new LruBitmapCache());
+        this.activity = mainActivity;
+
+        DisplayMetrics metrics = mainActivity.getResources().getDisplayMetrics();
+        width = metrics.widthPixels;
+        height = metrics.heightPixels;
+
     }
 
     @Override
-    public int getCount() {
-        return movieItems.size();
+    public CustomListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.list_row, parent, false);
+
+        return new MyViewHolder(itemView);
     }
 
     @Override
-    public Object getItem(int location) {
-        return movieItems.get(location);
-    }
+    public void onBindViewHolder(MyViewHolder holder, int position) {
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView( int position, View convertView, ViewGroup parent) {
-        final ViewHolder holder;
         final Newsfeeds detailss = movieItems.get(position);
-        if (convertView == null) {
-
-
-            holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.list_row, parent, false);
-            holder.title = (TextView) convertView.findViewById(R.id.title_txt);
-            holder.time_txt = (TextView) convertView.findViewById(R.id.time_txt);
-            holder.content = (TextView) convertView.findViewById(R.id.content_txt);
-            holder.imageView = (ImageView) convertView.findViewById(R.id.thumbnail);
-            holder.share_button = (Button) convertView.findViewById(R.id.share_button);
-
-
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
         holder.title.setText(movieItems.get(position).getTitle());
-        holder.content.setText(movieItems.get(position).getContent_text());
-        holder.time_txt.setText("post: " + DateUtils.getRelativeTimeSpanString(Long.parseLong(movieItems.get(position).getTime())));
+        holder.content_txt.setText(movieItems.get(position).getContent());
+        holder.thumbnail.getLayoutParams().width=width;
 
-        holder.share_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ImageUrl = "";
-                title="";
-                title=detailss.getContent_text();
-                ImageUrl = detailss.getImg_url();
-                new BackgroundTask().execute(new String[]{ImageUrl});
-
-
-
-            }
-        });
-
-       /* Glide.with(activity).load(movieItems.get(position).getImg_url())
-                .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.imageView);*/
-        Glide.with(this.activity).
+       /* Glide.with(this.activity).
                 load(movieItems.get(position).getImg_url())
                 .thumbnail(Glide.with(this.activity)
                         .load(Integer.valueOf(R.raw.loading_thumbnail)))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .dontAnimate().into(holder.imageView);
+                .dontAnimate().into(holder.thumbnail);*/
 
 
-       /* mImageLoader.get(detailss.getImg_url(), ImageLoader.getImageListener(
-                holder.imageView,R.raw.loading_thumbnail, R.drawable.ico_error));
+        mImageLoader.get(movieItems.get(position).getImg_url(), ImageLoader.getImageListener(
+                holder.thumbnail,R.raw.loading_thumbnail, R.drawable.ico_error));
         Cache cache = requestQueue.getCache();
-        Cache.Entry entry = cache.get(detailss.getImg_url());
+        Cache.Entry entry = cache.get(movieItems.get(position).getImg_url());
         if(entry != null){
             try {
                 String data = new String(entry.data, "UTF-8");
@@ -145,16 +110,46 @@ public class CustomListAdapter extends BaseAdapter {
             }
         }else{
             // cached response doesn't exists. Make a network call here
-        }*/
-        return convertView;
+        }
+
+
+        holder.share_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImageUrl = "";
+                title="";
+                title=detailss.getContent();
+                ImageUrl = detailss.getImg_url();
+                new BackgroundTask().execute(new String[]{ImageUrl});
+
+
+
+            }
+        });
     }
 
-    class ViewHolder {
-        TextView title, time_txt;
-        TextView content;
-        ImageView imageView;
-        Button share_button;
+    @Override
+    public int getItemCount() {
+        return movieItems.size();
     }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView title, time_txt;
+        TextView content_txt;
+        ImageView thumbnail;
+        Button share_button;
+
+        public MyViewHolder(View itemView) {
+            super(itemView);
+
+            thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
+            title = (TextView) itemView.findViewById(R.id.title_txt);
+            content_txt = (TextView) itemView.findViewById(R.id.content_txt);
+            share_button = (Button) itemView.findViewById(R.id.share_button);
+        }
+    }
+
+
 
     private class BackgroundTask extends AsyncTask<String, Void, Bitmap> {
 
@@ -233,6 +228,4 @@ public class CustomListAdapter extends BaseAdapter {
         }
         throw new IOException("Not an HTTP connection");
     }
-
-
 }

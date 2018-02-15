@@ -2,19 +2,18 @@ package com.sridhar.onlinenewsfeed.activities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +26,6 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.sridhar.onlinenewsfeed.R;
@@ -39,47 +37,123 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private RequestQueue requestQueue;
-    private String url = null;
+    private String url = "https://sridharapps.000webhostapp.com/connect/login.php";
+    private String urls = "https://sridhar.000webhostapp.com/connection/login.php";
     private ProgressDialog pDialog;
     private List<Newsfeeds> newsList = new ArrayList<Newsfeeds>();
-    private ListView listView;
+    private RecyclerView listView;
     private CustomListAdapter adapter;
     private Context context;
     ImageRequest imageRequest;
-
+    private LinearLayoutManager layoutManager;
     private JsonArrayRequest jsonArrayRequest;
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         initNavigationDrawer();
 
-
         requestQueue = VolleySingleton.getVolleySingletonInstance().getRequestQueue();
-        listView = (ListView) findViewById(R.id.list);
+
+        newsList = new ArrayList<Newsfeeds>();
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swifeRefresh);
+
+        //requestQueue = VolleySingleton.getVolleySingletonInstance().getRequestQueue();
+        listView = (RecyclerView) findViewById(R.id.recycler_view);
         context = this;
 
-        url = "https://sites.google.com/site/myapps4748/android/abc.json";
-        jsonArrayRequest = getJsonArrayRequest();
-        requestQueue.add(jsonArrayRequest);
+        adapter = new CustomListAdapter(MainActivity.this, newsList);
+        layoutManager = new LinearLayoutManager(getApplicationContext());
+        layoutManager.setReverseLayout(false);
+        listView.setLayoutManager(layoutManager);
+        listView.setAdapter(adapter);
+
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        swipeRefreshLayout.setRefreshing(true);
+                                        // newsList.clear();
+                                        jsonArrayRequest = fetchNews();
+                                        requestQueue.add(jsonArrayRequest);
+                                        //fetchNews();
 
 
+                                    }
+                                }
+        );
+
+
+    }
+
+    private JsonArrayRequest fetchNews() {
+
+        // showing refresh animation before making http call
+        swipeRefreshLayout.setRefreshing(true);
+
+        // appending offset to url
+
+        // Volley's json array request object
+        JsonArrayRequest req = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        Log.e("msg",""+response.length());
+                        if (response.length() > 0) {
+                            newsList.clear();
+                            // looping through json and adding to movies list
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    JSONObject obj = response.getJSONObject(i);
+
+                                    newsList.add(0, new Newsfeeds(
+                                            obj.getString("title"),
+                                            obj.getString("content"),
+                                            obj.getString("imgurl")
+                                    ));
+
+                                } catch (JSONException e) {
+                                    Log.e("msg", "JSON Parsing error: " + e.getMessage());
+                                }
+                            }
+
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        // stopping swipe refresh
+                        swipeRefreshLayout.setRefreshing(false);
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("msg", "Server Error: " + error.getMessage());
+
+                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+
+                // stopping swipe refresh
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        return req;
     }
 
     public void initNavigationDrawer() {
@@ -192,10 +266,14 @@ public class MainActivity extends AppCompatActivity {
 
     private JsonArrayRequest getJsonArrayRequest() {
         final ProgressDialog pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Loading...");
-        pDialog.show();
+        //pDialog.setMessage("Loading...");
+        //pDialog.show();
+        swipeRefreshLayout.setRefreshing(true);
+
+        // appending offset to url
+        // String url = urls + offSet;
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                url,
+                urls,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -204,7 +282,9 @@ public class MainActivity extends AppCompatActivity {
                             //jsonResponse = "";
                             for (int i = 0; i < response.length(); i++) {
 
-                                JSONObject obj = (JSONObject) response
+                                //getting product object from json array
+                                JSONObject obj = response.getJSONObject(i);
+                                /*JSONObject obj = (JSONObject) response
                                         .get(i);
                                 final Newsfeeds newsfeeds = new Newsfeeds();
 
@@ -213,16 +293,22 @@ public class MainActivity extends AppCompatActivity {
 
 
                                 String s1 = obj.getString("content");
-                                newsfeeds.setContent_text(s1);
+                                newsfeeds.setContent(s1);
 
-                                String s2 = obj.getString("img_url");
-                                newsfeeds.setImg_url(s2);
+                                String s2 = obj.getString("imgurl");
+                                newsfeeds.setImg_url(s2);*/
 
-                                String s3 = obj.getString("time");
+                             /*   String s3 = obj.getString("time");
                                 newsfeeds.setTime(s3);
+*/
+                                newsList.add(0, new Newsfeeds(
+                                        obj.getString("title"),
+                                        obj.getString("content"),
+                                        obj.getString("imgurl")
+                                ));
 
 
-                                newsList.add(0, newsfeeds);
+                                //newsList.add(0, newsfeeds);
 
 
                             }
@@ -234,18 +320,23 @@ public class MainActivity extends AppCompatActivity {
                                     "Error: " + e.getMessage(),
                                     Toast.LENGTH_LONG).show();
                         }
-
-                        pDialog.hide();
+                        swipeRefreshLayout.setRefreshing(false);
+                        //pDialog.hide();
                         //Collections.shuffle(newsList);
                         Log.e("msg", "" + newsList.size());
                         adapter = new CustomListAdapter(MainActivity.this, newsList);
+                        layoutManager = new LinearLayoutManager(getApplicationContext());
+                        layoutManager.setReverseLayout(false);
+                        listView.setLayoutManager(layoutManager);
                         listView.setAdapter(adapter);
+                        //listView.setAdapter(adapter);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         handleVolleyError(error);
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 }
         );
@@ -268,4 +359,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onRefresh() {
+        jsonArrayRequest = fetchNews();
+        requestQueue.add(jsonArrayRequest);
+    }
 }

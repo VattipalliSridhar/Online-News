@@ -9,8 +9,8 @@ import android.graphics.Bitmap;
 public class Newsfeeds
 {
     String title;
-    String content_text;
-    String img_url;
+    String content;
+    String imgurl;
     Bitmap bitmap;
     String time;
 
@@ -18,12 +18,10 @@ public class Newsfeeds
         return time;
     }
 
-    public Newsfeeds(String title, String content_text, String img_url, Bitmap bitmap, String time) {
+    public Newsfeeds(String title, String content_text, String img_url) {
         this.title = title;
-        this.content_text = content_text;
-        this.img_url = img_url;
-        this.bitmap = bitmap;
-        this.time = time;
+        this.content = content_text;
+        this.imgurl = img_url;
     }
 
     public void setTime(String time) {
@@ -54,19 +52,19 @@ public class Newsfeeds
         this.title = title;
     }
 
-    public String getContent_text() {
-        return content_text;
+    public String getContent() {
+        return content;
     }
 
-    public void setContent_text(String content_text) {
-        this.content_text = content_text;
+    public void setContent(String content_text) {
+        this.content = content_text;
     }
 
     public String getImg_url() {
-        return img_url;
+        return imgurl;
     }
 
     public void setImg_url(String img_url) {
-        this.img_url = img_url;
+        this.imgurl = img_url;
     }
 }
